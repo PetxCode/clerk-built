@@ -1,9 +1,13 @@
+import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
 import React from "react";
 
 const page = async () => {
+  const user = await currentUser();
+  const userID = user?.publicMetadata?.userId;
+
   const url = process.env.APP_URL as string;
-  const res = await fetch(`${url}/api/post`, {
+  const res = await fetch(`${url}/api/${userID}`, {
     method: "GET",
     cache: "no-cache",
     next: {
@@ -14,11 +18,11 @@ const page = async () => {
   const data = await res.json();
   return (
     <div>
-      <div>view all posts</div>
+      <div>view all posts:</div>
 
       <div className="my-5">
         <div className="flex gap-2 flex-wrap w-full">
-          {data.data.map((post: any) => (
+          {data.data?.posts.map((post: any) => (
             <div
               key={post._id}
               className="w-[250px] h-[350px] border rounded-md overflow-hidden "
